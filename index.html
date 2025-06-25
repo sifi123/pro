@@ -1,0 +1,786 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>InvestPro - Investment Platform</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .screen {
+            display: none;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+            padding: 30px;
+            margin: 20px 0;
+            animation: fadeIn 0.6s ease;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+    color: white;
+    background: linear-gradient(45deg, #f7e733, #34d399);
+    padding: 12px 24px;
+    border-radius: 12px;
+    display: inline-block;
+    font-size: 2.5em;
+    margin-bottom: 10px;
+}
+
+        .header p {
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .nav-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+        }
+
+        .nav-btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .nav-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .nav-btn.active {
+            background: linear-gradient(45deg, #764ba2, #667eea);
+        }
+
+        /* Login/Signup Screen */
+        .auth-container {
+            max-width: 400px;
+            margin: 0 auto;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5e9;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .btn {
+            background: linear-gradient(45deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            width: 100%;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .toggle-auth {
+            text-align: center;
+            color: #667eea;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* Investment Plans */
+        .plans-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+
+        .plan-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            transition: transform 0.3s ease;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .plan-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: rotate(45deg);
+            transition: all 0.6s;
+            opacity: 0;
+        }
+
+        .plan-card:hover::before {
+            animation: shine 0.6s ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { transform: translateX(-100%) translateY(-100%) rotate(45deg); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(100%) translateY(100%) rotate(45deg); opacity: 0; }
+        }
+
+        .plan-card:nth-child(2) {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+        }
+
+        .plan-card:nth-child(3) {
+            background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+        }
+
+        .plan-card:nth-child(4) {
+            background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%);
+            color: #333;
+            border: 3px solid #ffd700;
+            box-shadow: 0 15px 35px rgba(255, 215, 0, 0.3);
+        }
+
+        .plan-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+        }
+
+        .plan-card h3 {
+            font-size: 1.8em;
+            margin-bottom: 15px;
+        }
+
+        .plan-card .price {
+            font-size: 2.5em;
+            font-weight: bold;
+            margin-bottom: 15px;
+        }
+
+        .plan-card .features {
+            list-style: none;
+            margin-bottom: 25px;
+        }
+
+        .plan-card .features li {
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Deposit/Withdraw */
+        .transaction-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
+        }
+
+        .transaction-box {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 12px;
+            border-left: 5px solid #667eea;
+        }
+
+        .transaction-box h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .amount-input {
+            background: white;
+            border: 2px solid #e1e5e9;
+            padding: 15px;
+            border-radius: 8px;
+            font-size: 18px;
+            width: 100%;
+            margin-bottom: 15px;
+        }
+
+        .method-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .method-btn {
+            background: white;
+            border: 2px solid #e1e5e9;
+            padding: 10px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .method-btn.selected {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        /* Dashboard */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+            text-align: center;
+            border-top: 4px solid #667eea;
+        }
+
+        .stat-card h3 {
+            color: #667eea;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+
+        .stat-card p {
+            color: #666;
+            font-size: 1.1em;
+        }
+
+        .referral-section {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px;
+            text-align: center;
+            margin-top: 20px;
+        }
+
+        .referral-code {
+            background: rgba(255,255,255,0.2);
+            padding: 15px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 1.2em;
+            margin: 15px 0;
+            cursor: pointer;
+            transition: background 0.3s ease;
+        }
+
+        .referral-code:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        @media (max-width: 768px) {
+            .transaction-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-buttons {
+                justify-content: center;
+            }
+            
+            .container {
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>InvestPro</h1>
+            <p>Your Trusted Investment Platform</p>
+        </div>
+
+        <div class="nav-buttons">
+            <button class="nav-btn active" onclick="showScreen('login')">Login/Signup</button>
+            <button class="nav-btn" onclick="showScreen('plans')">Investment Plans</button>
+            <button class="nav-btn" onclick="showScreen('transaction')">Deposit/Withdraw</button>
+            <button class="nav-btn" onclick="showScreen('dashboard')">Dashboard</button>  
+            <button class="btn" style="margin-top: 20px;" onclick="logoutUser()">Logout</button>
+</div>
+
+        <!-- Screen 1: Login/Signup -->
+        <div id="login" class="screen active">
+            <div class="auth-container">
+                <div id="loginForm">
+                    <h2 style="text-align: center; margin-bottom: 25px; color: #667eea;">Login to Your Account</h2>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn" onclick="handleLogin()">Login</button>
+                    <p class="toggle-auth" onclick="toggleAuthMode()">Don't have an account? Sign up here</p>
+                </div>
+
+                <div id="signupForm" style="display: none;">
+                    <h2 style="text-align: center; margin-bottom: 25px; color: #667eea;">Create New Account</h2>
+                    <div class="form-group">
+                        <label>Full Name</label>
+                        <input type="text" id="signupName" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label>Email Address</label>
+                        <input type="email" id="signupEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>Password</label>
+                        <input type="password" id="signupPassword" placeholder="Create a password">
+                    </div>
+                    <div class="form-group">
+                        <label>Referral Code (Optional)</label>
+                        <input type="text" id="referralCode" placeholder="Enter referral code">
+                    </div>
+                    <button class="btn" onclick="handleSignup()">Create Account</button>
+                    <p class="toggle-auth" onclick="toggleAuthMode()">Already have an account? Login here</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 2: Investment Plans -->
+        <div id="plans" class="screen">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #667eea;">Choose Your Crown Investment Plan</h2>
+            <div class="plans-grid">
+                <div class="plan-card">
+                    <h3>👑 Crown 1</h3>
+                    <div class="price">Rs 500</div>
+                    <p style="margin-bottom: 20px;">Investment Amount</p>
+                    <ul class="features">
+                        <li>💰 Monthly: Rs 900</li>
+                        <li>📅 Daily: Rs 30</li>
+                        <li>⏰ Duration: 30 Days</li>
+                        <li>📈 Total Return: 180%</li>
+                        <li>🎯 ROI: Rs 400</li>
+                    </ul>
+                    <button class="btn" onclick="selectPlan('crown1')">Choose Crown 1</button>
+                </div>
+
+                <div class="plan-card">
+                    <h3>👑 Crown 2</h3>
+                    <div class="price">Rs 1,000</div>
+                    <p style="margin-bottom: 20px;">Investment Amount</p>
+                    <ul class="features">
+                        <li>💰 Monthly: Rs 1,800</li>
+                        <li>📅 Daily: Rs 60</li>
+                        <li>⏰ Duration: 30 Days</li>
+                        <li>📈 Total Return: 180%</li>
+                        <li>🎯 ROI: Rs 800</li>
+                    </ul>
+                    <button class="btn" onclick="selectPlan('crown2')">Choose Crown 2</button>
+                </div>
+
+                <div class="plan-card">
+                    <h3>👑 Crown 3</h3>
+                    <div class="price">Rs 3,000</div>
+                    <p style="margin-bottom: 20px;">Investment Amount</p>
+                    <ul class="features">
+                        <li>💰 Monthly: Rs 6,000</li>
+                        <li>📅 Daily: Rs 200</li>
+                        <li>⏰ Duration: 30 Days</li>
+                        <li>📈 Total Return: 200%</li>
+                        <li>🎯 ROI: Rs 3,000</li>
+                    </ul>
+                    <button class="btn" onclick="selectPlan('crown3')">Choose Crown 3</button>
+                </div>
+
+                <div class="plan-card" style="background: linear-gradient(135deg, #ffd700 0%, #ffb347 100%); color: #333;">
+                    <h3>👑 Crown 4</h3>
+                    <div class="price">Rs 5,000</div>
+                    <p style="margin-bottom: 20px;">Investment Amount</p>
+                    <ul class="features">
+                        <li>💰 Monthly: Rs 10,500</li>
+                        <li>📅 Daily: Rs 350</li>
+                        <li>⏰ Duration: 30 Days</li>
+                        <li>📈 Total Return: 210%</li>
+                        <li>🎯 ROI: Rs 5,500</li>
+                        <li>⭐ VIP Support</li>
+                    </ul>
+                    <button class="btn" onclick="selectPlan('crown4')" style="background: linear-gradient(45deg, #667eea, #764ba2); color: white;">Choose Crown 4</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Screen 3: Deposit/Withdraw -->
+        <div id="transaction" class="screen">
+            <h2 style="text-align: center; margin-bottom: 30px; color: #667eea;">Manage Your Funds</h2>
+            <div class="transaction-container">
+                <div class="transaction-box">
+    <h3>💰 Make Deposit</h3>
+    <input type="number" class="amount-input" id="depositAmount" placeholder="Enter amount (Min Rs 500)">
+    
+    <div class="method-selector">
+        <div class="method-btn selected" onclick="selectMethod(this, 'Easypaisa')">Easypaisa</div>
+        <div class="method-btn" onclick="selectMethod(this, 'JazzCash')">JazzCash</div>
+    </div>
+
+    <input type="text" class="amount-input" id="transactionId" placeholder="Enter Transaction ID">
+    <input type="file" class="amount-input" id="screenshot">
+    
+    <button class="btn" onclick="submitDeposit()">Submit Deposit</button>
+    
+    <p style="margin-top: 15px; font-size: 14px; color: #555;">
+        Account Name: <strong>Saifullah</strong><br>
+        Easypaisa/JazzCash #: <strong>0336-7169498</strong><br>
+        Auto credit within 3 minutes after verification.
+    </p>
+</div>
+
+                <div class="transaction-box">
+    <h3>💸 Withdraw Funds</h3>
+
+</div>
+
+                    <div class="transaction-box">
+    <h3>💸 Withdraw via Easypaisa or JazzCash</h3>
+
+    <div class="form-group">
+        <label>Select Method:</label>
+        <select id="withdrawMethod" class="amount-input">
+            <option value="easypaisa">Easypaisa</option>
+            <option value="jazzcash">JazzCash</option>
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Account Holder Name:</label>
+        <input type="text" id="accountName" placeholder="Enter your name">
+    </div>
+
+    <div class="form-group">
+        <label>Account Number:</label>
+        <input type="text" id="accountNumber" placeholder="Enter your number">
+    </div>
+
+    <div class="form-group">
+        <label>Amount (Rs):</label>
+        <input type="number" id="withdrawAmountPKR" placeholder="Enter amount">
+    </div>
+
+    <button class="btn" onclick="submitWithdraw()">Submit Withdrawal Request</button>
+
+    <p style="margin-top: 15px; color: #666; font-size: 14px;">
+        🔐 Note: Withdrawal allowed only after active investment.<br>
+        ✅ Minimum withdrawal: Rs 600 (Crown1), Rs 1200 (Crown2), Rs 3200 (Crown3), Rs 5200 (Crown4)
+    </p>
+</div>
+
+            </div>
+        </div>
+
+        <!-- Screen 4: Dashboard + Referral -->
+        <div id="dashboard" class="screen">
+            
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                   <h3 id="totalBalance">Rs 0</h3>
+<p>Total Balance</p>
+</div>
+<div class="stat-card">
+    <h3 id="totalEarnings">Rs 0</h3>
+    <p>Total Earnings</p>
+</div>
+<div class="stat-card">
+    <h3 id="activeInvestments">0</h3>
+    <p>Active Investments</p>
+</div>
+<div class="stat-card">
+    <h3 id="referralEarnings">Rs 0</h3>
+    <p>Referral Earnings</p>
+</div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px;">
+                <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Recent Transactions</h3>
+                    <div style="color: #666;">
+                        <<p 
+                    </div>
+                </div>
+
+                <div style="background: white; padding: 20px; border-radius: 12px; box-shadow: 0 5px 15px rgba(0,0,0,0.08);">
+                    <h3 style="color: #667eea; margin-bottom: 15px;">Active Plans</h3>
+                    <div style="color: #666;">
+                        <p style="padding: 8px 0;">No active plans. Choose one to start investing.</p>
+
+                </div>
+            </div>
+
+            <div class="referral-section">
+                <h3 style="margin-bottom: 15px;">🚀 Referral Program</h3>
+                <p style="margin-bottom: 15px;">Earn 10% commission on every referral!</p>
+                <div class="referral-code" onclick="copyReferralCode()">
+                    Your Referral Code: <strong>INV123456</strong>
+                    <br><small>(Click to copy)</small>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; margin-top: 20px;">
+                    <div>
+    <h4>0</h4>
+    <p>Total Referrals</p>
+</div>
+<div>
+    <h4>0</h4>
+    <p>Active This Month</p>
+</div>
+<div>
+    <h4>Rs 0</h4>
+    <p>Commission Earned</p>
+</div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+<div style="text-align: center; margin-top: 30px;">
+    <a href="mailto:saifullahkhan91997@gmail.com" class="btn" style="display: inline-block; width: auto;">
+        📩 Contact Us
+    </a>
+</div>
+
+    <script>
+    let currentUser = null;
+    let selectedMethod = 'Easypaisa';
+
+    function showScreen(screenId) {
+    if (!currentUser && screenId !== 'login') {
+        alert("⚠️ Please login first.");
+        screenId = 'login';
+    }
+
+    const screens = document.querySelectorAll('.screen');
+    screens.forEach(screen => screen.classList.remove('active'));
+    document.getElementById(screenId).classList.add('active');
+
+    const navBtns = document.querySelectorAll('.nav-btn');
+    navBtns.forEach(btn => btn.classList.remove('active'));
+    if (event?.target?.classList.contains('nav-btn')) {
+        event.target.classList.add('active');
+    }
+}
+
+
+
+    function toggleAuthMode() {
+        const loginForm = document.getElementById('loginForm');
+        const signupForm = document.getElementById('signupForm');
+
+        loginForm.style.display = loginForm.style.display === 'none' ? 'block' : 'none';
+        signupForm.style.display = signupForm.style.display === 'none' ? 'block' : 'none';
+    }
+
+    function handleSignup() {
+        const name = document.getElementById('signupName').value.trim();
+        const email = document.getElementById('signupEmail').value.trim();
+        const password = document.getElementById('signupPassword').value.trim();
+
+        if (!name || !email || !password) {
+            alert('Please fill in all required fields');
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+
+        const alreadyExists = users.find(user => user.email === email);
+        if (alreadyExists) {
+            alert('❌ This email is already registered. Please login.');
+            return;
+        }
+
+        const newUser = { name, email, password, balance: 0, earnings: 0, referrals: 0 };
+        users.push(newUser);
+        localStorage.setItem('users', JSON.stringify(users));
+
+        currentUser = newUser;
+        alert('✅ Account created successfully!');
+        updateDashboard();
+        showScreen('dashboard');
+    }
+
+    function handleLogin() {
+        const email = document.getElementById('loginEmail').value.trim();
+        const password = document.getElementById('loginPassword').value.trim();
+
+
+        if (!email || !password) {
+            alert('Please fill in all fields');
+            return;
+        }
+
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+        const found = users.find(user => user.email === email && user.password === password);
+
+        if (found) {
+            currentUser = found;
+            alert('✅ Login successful! Welcome back!');
+            updateDashboard();
+            showScreen('dashboard');
+        } else {
+            alert('❌ Incorrect email or password');
+        }
+    }
+
+    function updateDashboard() {
+        if (!currentUser) return;
+
+        document.getElementById('totalBalance').textContent = `Rs ${currentUser.balance}`;
+        document.getElementById('totalEarnings').textContent = `Rs ${currentUser.earnings}`;
+        document.getElementById('referralEarnings').textContent = `Rs ${currentUser.referrals}`;
+    }
+
+    function selectPlan(planType) {
+        const planDetails = {
+            crown1: { name: 'Crown 1', amount: 500, monthly: 900, daily: 30 },
+            crown2: { name: 'Crown 2', amount: 1000, monthly: 1800, daily: 60 },
+            crown3: { name: 'Crown 3', amount: 3000, monthly: 6000, daily: 200 },
+            crown4: { name: 'Crown 4 (VIP)', amount: 5000, monthly: 10500, daily: 350 }
+        };
+
+        const plan = planDetails[planType];
+        alert(`🎉 You selected ${plan.name}!\n💰 Investment: Rs ${plan.amount}\n📈 Monthly Return: Rs ${plan.monthly}\n📅 Daily Return: Rs ${plan.daily}`);
+        showScreen('transaction');
+    }
+
+    function selectMethod(element, method) {
+        const methodBtns = element.parentNode.querySelectorAll('.method-btn');
+        methodBtns.forEach(btn => btn.classList.remove('selected'));
+        element.classList.add('selected');
+        selectedMethod = method;
+    }
+
+    function submitDeposit() {
+        const amount = parseInt(document.getElementById('depositAmount').value);
+        const trxId = document.getElementById('transactionId').value.trim();
+        const screenshot = document.getElementById('screenshot').files[0];
+
+        if (!amount || amount < 500) {
+            alert("❌ Minimum deposit is Rs 500");
+            return;
+        }
+
+        if (!trxId || !screenshot) {
+            alert("❌ Fill in all deposit details");
+            return;
+        }
+
+        alert("✅ Deposit submitted! Balance will update after verification.");
+        setTimeout(() => {
+            currentUser.balance += amount;
+            saveUser();
+            updateDashboard();
+            alert(`🎉 Rs ${amount} added to your account successfully!`);
+        }, 3000); // 3 seconds for demo
+    }
+
+    function saveUser() {
+        let users = JSON.parse(localStorage.getItem('users') || '[]');
+        users = users.map(u => (u.email === currentUser.email ? currentUser : u));
+        localStorage.setItem('users', JSON.stringify(users));
+    }
+
+    function copyReferralCode() {
+        navigator.clipboard.writeText('INV123456').then(() => {
+            alert('Referral code copied!');
+        });
+    }
+function logoutUser() {
+    currentUser = null;
+    showScreen('login');
+    alert("👋 You've been logged out.");
+}
+
+function addDailyIncome() {
+    if (!currentUser) return;
+
+    const lastIncomeDate = localStorage.getItem(`income_${currentUser.email}`);
+    const today = new Date().toDateString();
+
+    if (lastIncomeDate !== today) {
+        // Daily Rs 30 add (Crown1) – you can make this dynamic later
+        currentUser.balance += 30;
+        currentUser.earnings += 30;
+
+        localStorage.setItem(`income_${currentUser.email}`, today);
+        saveUser();
+        updateDashboard();
+        console.log("✅ Daily income added");
+    } else {
+        console.log("⏳ Daily income already added today");
+    }
+}
+
+    document.addEventListener('DOMContentLoaded', () => {
+        console.log('App Loaded');
+    });
+</script>
+
+</body>
+</html>
